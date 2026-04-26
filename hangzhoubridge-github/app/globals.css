@@ -1,0 +1,202 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Heritage Design System Colors */
+    --color-ivory: #F7F3EA;
+    --color-rice-paper: #EFE6D2;
+    --color-ink-black: #1F1A17;
+    --color-dark-tea: #5C4635;
+    --color-bronze-gold: #A67C52;
+    --color-vermilion: #A63D2F;
+    --color-celadon: #6E8B74;
+    --color-mist-gray: #D9D1C3;
+
+    /* Text Colors */
+    --color-text-primary: #1F1A17;
+    --color-text-secondary: #5C4635;
+    --color-text-tertiary: #8B7B68;
+    --color-text-muted: #A69B8E;
+
+    /* Background Colors */
+    --color-bg-primary: #F7F3EA;
+    --color-bg-secondary: #EFE6D2;
+    --color-bg-card: #FAF7F2;
+
+    /* Border Colors */
+    --color-border-light: rgba(166, 124, 82, 0.15);
+    --color-border-medium: rgba(166, 124, 82, 0.25);
+  }
+
+  * {
+    @apply border-[var(--color-border-light)];
+  }
+
+  body {
+    @apply bg-[var(--color-ivory)] text-[var(--color-ink-black)] font-sans antialiased;
+    overflow-x: hidden;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Smooth fade-in animation */
+  .fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Float animation for decorative elements */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  .animate-float {
+    animation: float 8s ease-in-out infinite;
+  }
+
+  /* Pulse animation for emphasis */
+  @keyframes pulse-subtle {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+
+  .animate-pulse-subtle {
+    animation: pulse-subtle 3s ease-in-out infinite;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Heritage-themed card */
+  .heritage-card {
+    @apply bg-[var(--color-bg-card)] border border-[var(--color-border-light)] shadow-sm;
+    transition: all 0.3s ease;
+  }
+
+  .heritage-card:hover {
+    @apply shadow-md;
+    transform: translateY(-2px);
+  }
+
+  /* Paper texture background */
+  .paper-texture {
+    background-color: var(--color-rice-paper);
+    background-image:
+      radial-gradient(ellipse at 20% 30%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(230, 220, 200, 0.03) 0%, transparent 50%);
+  }
+
+  /* Ink gradient overlay */
+  .ink-gradient {
+    background: linear-gradient(180deg, rgba(31, 26, 23, 0.03) 0%, rgba(31, 26, 23, 0.08) 100%);
+  }
+
+  /* Gold accent text */
+  .text-gold {
+    color: var(--color-bronze-gold);
+  }
+
+  /* Dynasty badge colors */
+  .dynasty-ancient {
+    background-color: #7B2D8E;
+  }
+
+  .dynasty-song {
+    background-color: #2D6A4F;
+  }
+
+  .dynasty-yuan-ming-qing {
+    background-color: #3D5A80;
+  }
+
+  .dynasty-modern {
+    background-color: #2563EB;
+  }
+}
+
+/* Leaflet map styling */
+.leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--color-ivory);
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  padding: 0;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-medium);
+  box-shadow: 0 4px 12px rgba(31, 26, 23, 0.1);
+}
+
+.leaflet-popup-content {
+  margin: 0;
+  min-width: 200px;
+}
+
+.leaflet-popup-close-button {
+  padding: 8px 12px;
+  color: var(--color-text-secondary);
+  font-size: 20px;
+}
+
+/* Bridge marker animations */
+@keyframes ping {
+  75%, 100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+.bridge-marker {
+  transition: transform 0.2s;
+}
+
+.bridge-marker:hover {
+  z-index: 10;
+  transform: scale(1.1);
+}
+
+/* Custom scrollbar - heritage themed */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(166, 124, 82, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(166, 124, 82, 0.4);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(166, 124, 82, 0.6);
+}

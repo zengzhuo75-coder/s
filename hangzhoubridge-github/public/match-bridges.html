@@ -1,0 +1,2781 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>桥梁图片匹配工具</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px;
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+      color: #333;
+    }
+    .subtitle {
+      text-align: center;
+      color: #666;
+      margin-bottom: 30px;
+    }
+    .match-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+      gap: 20px;
+    }
+    .match-item {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 15px;
+      background: #fafafa;
+    }
+    .match-item.unmatched {
+      border-color: #ff9800;
+      background: #fff8f0;
+    }
+    .match-item.matched {
+      border-color: #4caf50;
+      background: #f1f8f4;
+    }
+    .bridge-info {
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #333;
+    }
+    .bridge-id {
+      color: #667eea;
+      font-size: 14px;
+    }
+    .image-preview {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .image-thumb {
+      width: 120px;
+      height: 90px;
+      object-fit: cover;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .image-thumb:hover {
+      border-color: #667eea;
+      transform: scale(1.05);
+    }
+    .image-thumb.selected {
+      border-color: #4caf50;
+      border-width: 3px;
+    }
+    .select-controls {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    select {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    .btn-primary {
+      background: #667eea;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #5568d3;
+    }
+    .btn-success {
+      background: #4caf50;
+      color: white;
+    }
+    .btn-success:hover {
+      background: #45a049;
+    }
+    .status-bar {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      font-weight: bold;
+    }
+    .download-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 12px 30px;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .download-btn:hover {
+      background: #45a049;
+    }
+    .image-full {
+      max-width: 100%;
+      max-height: 400px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌉 桥梁图片匹配工具</h1>
+    <p class="subtitle">为每座桥梁选择对应的图片</p>
+
+    <button class="download-btn" onclick="applyMatches()">✓ 应用匹配并复制图片</button>
+
+    <div class="match-grid">
+      
+        <div class="match-item unmatched" id="item-bridge_009">
+          <div class="bridge-info">锁澜桥 <span class="bridge-id">bridge_009</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_009', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_009', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_009', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_009', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_009', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_009', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_009', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_009', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_009', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_009', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_009', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_009', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_009', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_009', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_009', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_009', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_009"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_009', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_009" onchange="selectImage('bridge_009', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_009')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_010">
+          <div class="bridge-info">映波桥 <span class="bridge-id">bridge_010</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_010', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_010', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_010', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_010', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_010', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_010', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_010', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_010', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_010', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_010', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_010', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_010', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_010', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_010', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_010', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_010', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_010"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_010', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_010" onchange="selectImage('bridge_010', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_010')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_011">
+          <div class="bridge-info">长桥 <span class="bridge-id">bridge_011</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_011', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_011', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_011', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_011', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_011', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_011', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_011', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_011', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_011', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_011', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_011', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_011', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_011', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_011', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_011', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_011', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_011"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_011', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_011" onchange="selectImage('bridge_011', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_011')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_012">
+          <div class="bridge-info">西泠印社桥 <span class="bridge-id">bridge_012</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_012', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_012', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_012', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_012', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_012', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_012', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_012', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_012', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_012', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_012', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_012', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_012', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_012', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_012', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_012', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_012', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_012"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_012', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_012" onchange="selectImage('bridge_012', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_012')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_019">
+          <div class="bridge-info">洋关桥 <span class="bridge-id">bridge_019</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_019', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_019', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_019', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_019', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_019', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_019', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_019', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_019', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_019', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_019', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_019', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_019', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_019', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_019', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_019', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_019', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_019"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_019', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_019" onchange="selectImage('bridge_019', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_019')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_020">
+          <div class="bridge-info">潮王桥 <span class="bridge-id">bridge_020</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_020', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_020', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_020', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_020', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_020', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_020', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_020', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_020', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_020', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_020', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_020', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_020', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_020', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_020', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_020', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_020', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_020"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_020', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_020" onchange="selectImage('bridge_020', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_020')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_021">
+          <div class="bridge-info">北星桥 <span class="bridge-id">bridge_021</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_021', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_021', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_021', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_021', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_021', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_021', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_021', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_021', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_021', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_021', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_021', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_021', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_021', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_021', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_021', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_021', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_021"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_021', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_021" onchange="selectImage('bridge_021', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_021')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_022">
+          <div class="bridge-info">忠义桥 <span class="bridge-id">bridge_022</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_022', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_022', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_022', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_022', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_022', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_022', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_022', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_022', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_022', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_022', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_022', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_022', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_022', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_022', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_022', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_022', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_022"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_022', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_022" onchange="selectImage('bridge_022', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_022')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_023">
+          <div class="bridge-info">灵隐寺桥 <span class="bridge-id">bridge_023</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_023', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_023', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_023', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_023', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_023', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_023', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_023', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_023', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_023', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_023', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_023', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_023', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_023', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_023', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_023', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_023', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_023"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_023', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_023" onchange="selectImage('bridge_023', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_023')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_024">
+          <div class="bridge-info">飞来峰桥 <span class="bridge-id">bridge_024</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_024', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_024', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_024', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_024', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_024', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_024', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_024', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_024', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_024', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_024', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_024', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_024', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_024', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_024', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_024', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_024', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_024"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_024', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_024" onchange="selectImage('bridge_024', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_024')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_025">
+          <div class="bridge-info">三天竺桥 <span class="bridge-id">bridge_025</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_025', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_025', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_025', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_025', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_025', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_025', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_025', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_025', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_025', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_025', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_025', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_025', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_025', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_025', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_025', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_025', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_025"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_025', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_025" onchange="selectImage('bridge_025', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_025')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_026">
+          <div class="bridge-info">虎跑泉桥 <span class="bridge-id">bridge_026</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_026', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_026', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_026', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_026', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_026', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_026', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_026', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_026', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_026', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_026', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_026', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_026', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_026', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_026', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_026', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_026', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_026"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_026', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_026" onchange="selectImage('bridge_026', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_026')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_027">
+          <div class="bridge-info">九溪桥 <span class="bridge-id">bridge_027</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_027', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_027', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_027', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_027', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_027', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_027', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_027', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_027', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_027', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_027', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_027', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_027', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_027', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_027', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_027', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_027', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_027"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_027', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_027" onchange="selectImage('bridge_027', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_027')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_028">
+          <div class="bridge-info">龙井桥 <span class="bridge-id">bridge_028</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_028', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_028', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_028', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_028', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_028', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_028', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_028', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_028', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_028', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_028', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_028', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_028', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_028', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_028', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_028', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_028', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_028"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_028', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_028" onchange="selectImage('bridge_028', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_028')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_029">
+          <div class="bridge-info">六和塔桥 <span class="bridge-id">bridge_029</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_029', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_029', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_029', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_029', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_029', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_029', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_029', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_029', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_029', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_029', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_029', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_029', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_029', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_029', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_029', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_029', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_029"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_029', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_029" onchange="selectImage('bridge_029', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_029')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_030">
+          <div class="bridge-info">钱塘江大桥 <span class="bridge-id">bridge_030</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_030', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_030', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_030', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_030', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_030', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_030', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_030', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_030', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_030', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_030', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_030', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_030', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_030', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_030', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_030', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_030', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_030"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_030', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_030" onchange="selectImage('bridge_030', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_030')">确认</button>
+          </div>
+        </div>
+      
+        <div class="match-item unmatched" id="item-bridge_031">
+          <div class="bridge-info">复兴大桥 <span class="bridge-id">bridge_031</span></div>
+          <div class="image-preview">
+            
+              <img src="/bridge-previews/image_055765261337252.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_055765261337252.jpg"
+                   onclick="selectImage('bridge_031', 'image_055765261337252.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_055765261337252.jpg')"
+                   title="image_055765261337252.jpg">
+            
+              <img src="/bridge-previews/image_060754425829309.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_060754425829309.jpg"
+                   onclick="selectImage('bridge_031', 'image_060754425829309.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_060754425829309.jpg')"
+                   title="image_060754425829309.jpg">
+            
+              <img src="/bridge-previews/image_061279861968087.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_061279861968087.jpg"
+                   onclick="selectImage('bridge_031', 'image_061279861968087.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_061279861968087.jpg')"
+                   title="image_061279861968087.jpg">
+            
+              <img src="/bridge-previews/image_135629417509227.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_135629417509227.jpg"
+                   onclick="selectImage('bridge_031', 'image_135629417509227.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_135629417509227.jpg')"
+                   title="image_135629417509227.jpg">
+            
+              <img src="/bridge-previews/image_180151619508737.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_180151619508737.jpg"
+                   onclick="selectImage('bridge_031', 'image_180151619508737.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_180151619508737.jpg')"
+                   title="image_180151619508737.jpg">
+            
+              <img src="/bridge-previews/image_215938688580841.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_215938688580841.jpg"
+                   onclick="selectImage('bridge_031', 'image_215938688580841.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_215938688580841.jpg')"
+                   title="image_215938688580841.jpg">
+            
+              <img src="/bridge-previews/image_245656674886973.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_245656674886973.jpg"
+                   onclick="selectImage('bridge_031', 'image_245656674886973.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_245656674886973.jpg')"
+                   title="image_245656674886973.jpg">
+            
+              <img src="/bridge-previews/image_269331282904289.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_269331282904289.jpg"
+                   onclick="selectImage('bridge_031', 'image_269331282904289.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_269331282904289.jpg')"
+                   title="image_269331282904289.jpg">
+            
+              <img src="/bridge-previews/image_286066273337506.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_286066273337506.jpg"
+                   onclick="selectImage('bridge_031', 'image_286066273337506.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_286066273337506.jpg')"
+                   title="image_286066273337506.jpg">
+            
+              <img src="/bridge-previews/image_499301086365557.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_499301086365557.jpg"
+                   onclick="selectImage('bridge_031', 'image_499301086365557.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_499301086365557.jpg')"
+                   title="image_499301086365557.jpg">
+            
+              <img src="/bridge-previews/image_530191748565429.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_530191748565429.jpg"
+                   onclick="selectImage('bridge_031', 'image_530191748565429.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_530191748565429.jpg')"
+                   title="image_530191748565429.jpg">
+            
+              <img src="/bridge-previews/image_764271167503692.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_764271167503692.jpg"
+                   onclick="selectImage('bridge_031', 'image_764271167503692.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_764271167503692.jpg')"
+                   title="image_764271167503692.jpg">
+            
+              <img src="/bridge-previews/image_800281815811884.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_800281815811884.jpg"
+                   onclick="selectImage('bridge_031', 'image_800281815811884.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_800281815811884.jpg')"
+                   title="image_800281815811884.jpg">
+            
+              <img src="/bridge-previews/image_808217784950237.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_808217784950237.jpg"
+                   onclick="selectImage('bridge_031', 'image_808217784950237.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_808217784950237.jpg')"
+                   title="image_808217784950237.jpg">
+            
+              <img src="/bridge-previews/image_822200037889273.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_822200037889273.jpg"
+                   onclick="selectImage('bridge_031', 'image_822200037889273.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_822200037889273.jpg')"
+                   title="image_822200037889273.jpg">
+            
+              <img src="/bridge-previews/image_875557333813823.jpg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="image_875557333813823.jpg"
+                   onclick="selectImage('bridge_031', 'image_875557333813823.jpg', this)"
+                   ondblclick="showFull('/bridge-previews/image_875557333813823.jpg')"
+                   title="image_875557333813823.jpg">
+            
+              <img src="/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   class="image-thumb"
+                   data-bridge="bridge_031"
+                   data-file="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"
+                   onclick="selectImage('bridge_031', '屏幕截图_25-4-2026_23434_cn.bing.com.jpeg', this)"
+                   ondblclick="showFull('/bridge-previews/屏幕截图_25-4-2026_23434_cn.bing.com.jpeg')"
+                   title="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">
+            
+          </div>
+          <div class="select-controls">
+            <select id="select-bridge_031" onchange="selectImage('bridge_031', this.value, null)">
+              <option value="">-- 选择图片 --</option>
+              <option value="image_055765261337252.jpg">image_055765261337252.jpg</option><option value="image_060754425829309.jpg">image_060754425829309.jpg</option><option value="image_061279861968087.jpg">image_061279861968087.jpg</option><option value="image_135629417509227.jpg">image_135629417509227.jpg</option><option value="image_180151619508737.jpg">image_180151619508737.jpg</option><option value="image_215938688580841.jpg">image_215938688580841.jpg</option><option value="image_245656674886973.jpg">image_245656674886973.jpg</option><option value="image_269331282904289.jpg">image_269331282904289.jpg</option><option value="image_286066273337506.jpg">image_286066273337506.jpg</option><option value="image_499301086365557.jpg">image_499301086365557.jpg</option><option value="image_530191748565429.jpg">image_530191748565429.jpg</option><option value="image_764271167503692.jpg">image_764271167503692.jpg</option><option value="image_800281815811884.jpg">image_800281815811884.jpg</option><option value="image_808217784950237.jpg">image_808217784950237.jpg</option><option value="image_822200037889273.jpg">image_822200037889273.jpg</option><option value="image_875557333813823.jpg">image_875557333813823.jpg</option><option value="屏幕截图_25-4-2026_23434_cn.bing.com.jpeg">屏幕截图_25-4-2026_23434_cn.bing.com.jpeg</option>
+            </select>
+            <button class="btn btn-success" onclick="confirmMatch('bridge_031')">确认</button>
+          </div>
+        </div>
+      
+    </div>
+  </div>
+
+  <div class="status-bar" id="statusBar">
+    已匹配: 0/17
+  </div>
+
+  <script>
+    const matches = {}
+    const imageFiles = ["image_055765261337252.jpg","image_060754425829309.jpg","image_061279861968087.jpg","image_135629417509227.jpg","image_180151619508737.jpg","image_215938688580841.jpg","image_245656674886973.jpg","image_269331282904289.jpg","image_286066273337506.jpg","image_499301086365557.jpg","image_530191748565429.jpg","image_764271167503692.jpg","image_800281815811884.jpg","image_808217784950237.jpg","image_822200037889273.jpg","image_875557333813823.jpg","屏幕截图_25-4-2026_23434_cn.bing.com.jpeg"]
+
+    function selectImage(bridgeId, file, element) {
+      // 清除之前的选中状态
+      document.querySelectorAll(`[data-bridge="${bridgeId}"]`).forEach(img => {
+        img.classList.remove('selected')
+      })
+
+      // 如果是通过下拉选择的
+      if (!element) {
+        const img = document.querySelector(`[data-bridge="${bridgeId}"][data-file="${file}"]`)
+        if (img) img.classList.add('selected')
+      }
+
+      // 更新下拉框
+      const select = document.getElementById(`select-${bridgeId}`)
+      if (select.value !== file) {
+        select.value = file
+      }
+
+      matches[bridgeId] = file
+    }
+
+    function confirmMatch(bridgeId) {
+      const item = document.getElementById(`item-${bridgeId}`)
+      const file = matches[bridgeId]
+
+      if (file) {
+        item.classList.remove('unmatched')
+        item.classList.add('matched')
+        updateStatus()
+        alert(`已确认匹配: ${bridgeId} → ${file}`)
+      } else {
+        alert('请先选择一张图片')
+      }
+    }
+
+    function updateStatus() {
+      const matched = Object.keys(matches).length
+      document.getElementById('statusBar').textContent = `已匹配: ${matched}/${missingBridges.length}`
+    }
+
+    function showFull(src) {
+      window.open(src, '_blank')
+    }
+
+    function applyMatches() {
+      const matchData = JSON.stringify(matches)
+      const xhr = new XMLHttpRequest()
+      xhr.open('POST', '/api/match-bridges', true)
+      xhr.setRequestHeader('Content-Type', 'application/json')
+      xhr.onload = function() {
+        if (xhr.status === 200) {
+          alert('✓ 匹配成功！图片已复制到目标位置。')
+          location.reload()
+        } else {
+          alert('✗ 应用失败: ' + xhr.responseText)
+        }
+      }
+      xhr.send(matchData)
+    }
+  </script>
+</body>
+</html>
